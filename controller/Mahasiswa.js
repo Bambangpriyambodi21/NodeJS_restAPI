@@ -2,8 +2,8 @@ const express = require('express')
 const app = express()
 const port = 3000
 const bodyParser = require('body-parser')
-const db= require('./connection')
-const response = require('./response')
+const db= require('../connection')
+const response = require('../model/response')
 
 app.use(bodyParser.json())
 
@@ -19,9 +19,15 @@ app.get('/get', (req, res) => {
     const nama = req.query.nama
     const alamat = req.query.alamat
     const jenis_kelamin = req.query.jenis_kelamin
-    const sql = "select * from mahasiswa where (nim like ? or nama like ? or alamat like ? or jenis_kelamin like ?)";
+    let sql ="";
 
-    db.query(sql, [`%${nim}%`,`%${nama}%`,`%${alamat}%`,`%${jenis_kelamin}%`], (error, result)=>{
+    if(nim!=null || nama!=null || alamat!=null || jenis_kelamin!=null){
+        sql = `select * from mahasiswa where (nim like '%${nim}%' or nama like '%${nama}%' or alamat like '%${alamat}%' or jenis_kelamin like '%${jenis_kelamin}%')`;
+    }else{
+        sql = `select * from mahasiswa`
+    }
+
+    db.query(sql, (error, result)=>{
         response(200, result, "get mahasiswa by nim", res)
     })
 })
@@ -29,8 +35,8 @@ app.get('/get', (req, res) => {
 app.post('/post', (req, res) => {
     console.log({requestFromOutside : req.body})
     const { nim, nama, alamat, jenis_kelamin } = req.body;
-    const sql = "INSERT INTO mahasiswa (nim, nama, alamat, jenis_kelamin) VALUES (?, ?, ?, ?)";
-    db.query(sql, [nim,nama,alamat,jenis_kelamin], (error, result)=>{
+    const sql = `INSERT INTO mahasiswa (nim, nama, alamat, jenis_kelamin) VALUES ('${nim}', '${nama}', '${alamat}', '${jenis_kelamin}')`;
+    db.query(sql, (error, result)=>{
         const newMahasiswa = {
             nim: nim,
             nama: nama,
@@ -48,8 +54,8 @@ app.post('/post', (req, res) => {
 app.put('/put', (req, res) => {
     console.log({requestFromOutside : req.body})
     const { nim, nama, alamat, jenis_kelamin } = req.body;
-    const sql = "update mahasiswa set nama=?, alamat=?, jenis_kelamin=? where nim=?;";
-    db.query(sql, [nama,alamat,jenis_kelamin,nim], (error, result)=>{
+    const sql = `update mahasiswa set nama='${nama}', alamat='${alamat}', jenis_kelamin='${jenis_kelamin}' where nim='${nim}'`;
+    db.query(sql, (error, result)=>{
         const newMahasiswa = {
             nim: nim,
             nama: nama,
@@ -66,8 +72,8 @@ app.put('/put', (req, res) => {
 
   app.delete('/delete/:nim', (req, res) => {
     const nim = req.params.nim;
-    const sql = "delete from mahasiswa where nim=?";
-    db.query(sql, [nim], (error, result)=>{
+    const sql = `delete from mahasiswa where nim='${nim}'`;
+    db.query(sql, (error, result)=>{
     if(result?.affectedRows){
         response(200, "Data mahasiswa deleted", "success deleted", res)
     }else{
