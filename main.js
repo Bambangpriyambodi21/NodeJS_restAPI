@@ -2,13 +2,15 @@ const express = require('express')
 const app = express()
 const port = 3000
 const bodyParser = require('body-parser')
-const db= require('./config/connection.js')
-const response = require('./model/response')
-const mahasiswaRouter = require('./route/MahasiswaRoute.js')
+const db= require('./src/config/connection.js')
+const response = require('./src/model/response.js')
+const mahasiswaRouter = require('./src/route/MahasiswaRoute.js')
+const dosenRouter = require('./src/route/DosenRoute.js')
 
 app.use(bodyParser.json())
 app.use(express.json())
 app.use('/mahasiswa', mahasiswaRouter);
+app.use('/dosen', dosenRouter);
 
 app.get('/', (req, res) => {
     db.query("Select * from mahasiswa", (error, result)=>{

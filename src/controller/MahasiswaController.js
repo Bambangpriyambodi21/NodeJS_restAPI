@@ -19,7 +19,6 @@ const getAllMahasiswa = async (req, res) => {
 
 const createMahasiswa = async (req, res) => {
     const body = req.body;
-    console.log(body);
 
     try {
         await mahasiswaModel.createMahasiswa(body);
@@ -39,8 +38,6 @@ const createMahasiswa = async (req, res) => {
 const updateMahasiswa = async (req, res) => {
     const params = req.params;
     const body = req.body;
-    console.log(body);
-    console.log(params);
 
     try {
         await mahasiswaModel.editMahasiswa(params, body);
@@ -59,7 +56,6 @@ const updateMahasiswa = async (req, res) => {
 
 const deleteMahasiswa = async (req, res) => {
     const params = req.params;
-    console.log(params);
 
     try {
         await mahasiswaModel.deleteMahasiswa(params);
